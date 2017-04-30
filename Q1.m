@@ -66,11 +66,12 @@ clear; close all;
 n = 1e6;
 
 %w = @(x)1./mvnpdf(x',[5 5])';
-w = @(x)1./(1/sqrt(2*pi).*exp(-(x(1,:)-5).^2/2-(x(2,:)-5).^2/2));
-f = @(x)exp(sum(5.*abs(x-5)));
+%w = @(x)1./(1/sqrt(2*pi).*exp(-(x(1,:)-5).^2/2-(x(2,:)-5).^2/2));
+w = @(x)1./(1/sqrt(2*pi).*exp(-(x-5).^2/2));
+f = @(x)exp(5.*abs(x-5));
+%f = @(x)exp(sum(5.*abs(x-5)));
 X = normrnd(5,1,2,n);
-T = w(X).*f(X);
+T = w(X(1,:)).*f(X(1,:)).*w(X(2,:)).*f(X(2,:));
 %T = (e-1)^2*exp(sum(5.*abs(X-5)).^2-sum(X));
 est_a = mean(T);
 var_a = 2*std(T)/sqrt(n);
-disp(['Estimate: ',num2str(est_a), '	Variance: ',num2str(var_a)]);
