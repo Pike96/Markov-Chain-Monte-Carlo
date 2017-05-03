@@ -2,44 +2,44 @@ clear; close all;
 fileID = fopen('uscap_xy.txt');
 data = textscan(fileID, '%f %f');
 fclose(fileID);
-C(:,1) = data{1};
-C(:,2) = data{2};
-start = C(5,:); % Start from Sacramento
+Axis(:,1) = data{1};
+Axis(:,2) = data{2};
+start = Axis(5,:); % Start from Sacramento
 % Delete 2 extra and start
-C(2,:) = [];
-C(4,:) = [];
-C(9,:) = [];
+Axis(2,:) = [];
+Axis(4,:) = [];
+Axis(9,:) = [];
 n = 47;
-E = 1000;
-for k = 1:E
+for k = 1:1e4
     T = 10000;
-    X = randperm(n);
-    SX(k) = d(start,n,X,C);
-    B = 1; t(k) = 0;
-    while B ~= 0, Y = X;
+    C = randperm(n);
+    TD(k) = d(start,n,C,Axis);
+    B = 1; time(k) = 0;
+    while B ~= 0, C2 = C;
         i = ceil(n*rand); j = ceil(n*rand);
-        Y([i j]) = X([j i]); 
-        SY = d(start,n,Y,C);
-        B = exp((SX(k)-SY)/T);
-        if rand < B, X = Y; SX(k) = SY; end
+        C2([i j]) = C([j i]); 
+        TD2 = d(start,n,C2,Axis);
+        B = exp((TD(k)-TD2)/T);
+        if rand < B, C = C2; TD(k) = TD2; end
         T = .99*T;
-        t(k) = t(k)+1;
+        time(k) = time(k)+1;
     end
+    if TD(k) < 19000, break; end;
 end
 
 figure;
 scatter(start(1),start(2),'x')
 xlabel('x'); ylabel('y');
 hold on
-scatter(C(:,1),C(:,2),'x')
+scatter(Axis(:,1),Axis(:,2),'x')
 hold on
-plot([start(1),C(X(1),1)],[start(2),C(X(1),2)])
+plot([start(1),Axis(C(1),1)],[start(2),Axis(C(1),2)])
 hold on
-for i=2:length(X)
-    x0=C(X(i-1),1);
-    y0=C(X(i-1),2);
-    x1=C(X(i),1);
-    y1=C(X(i),2);
+for i=2:length(C)
+    x0=Axis(C(i-1),1);
+    y0=Axis(C(i-1),2);
+    x1=Axis(C(i),1);
+    y1=Axis(C(i),2);
     xx=[x0,x1];
     yy=[y0,y1];
     plot(xx,yy)
@@ -47,5 +47,5 @@ for i=2:length(X)
 end
 
 figure;
-scatter(t,SX)
+scatter(time,TD)
 xlabel('Simulation time'); ylabel('Total distance');
