@@ -10,13 +10,13 @@ n = 47;
 for k = 1:1e4
     T = 10000; C = randperm(n);
     TD(k) = d(start,n,C,Axis);
-    B = 1; time(k) = 0;
-    while B ~= 0, C2 = C;
+    alpha = 1; time(k) = 0;
+    while alpha ~= 0, C2 = C;
         i = ceil(n*rand); j = ceil(n*rand);
         C2([i j]) = C([j i]); 
         TD2 = d(start,n,C2,Axis);
-        B = exp((TD(k)-TD2)/T);
-        if rand < B, C = C2; TD(k) = TD2; end
+        alpha = exp((TD(k)-TD2)/T);
+        if rand < alpha || TD2 <= TD(k), C = C2; TD(k) = TD2; end
         T = .99*T; time(k) = time(k)+1;
     end
     if TD(k) < 19000, break; end;
